@@ -81,10 +81,11 @@ def main():
 
     if len(r.json()) == 7:
         dataDict["TIME"] = time.time()
+        print(json.dumps(r.json(), indent=4, sort_keys=True))
         for i in r.json():
             dataDict[i["currency"]] = int(i["balance"])/100000000
 
-        print(dataDict)
+        #print(dataDict)
         WriteToDb()
     else:
         print(r.json())
@@ -93,7 +94,7 @@ def main():
     luri = "/account/BTC/AUD/tradingfee"
     res = build_headers(luri, pkey, skey)
     r = requests.get(domain+luri, headers=res, verify=True)
-    print(r.json())
+    print(json.dumps(r.json(), indent=4, sort_keys=True))
 
 if __name__ == "__main__":
     main()

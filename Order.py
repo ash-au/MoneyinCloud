@@ -6,7 +6,6 @@ import hashlib
 import hmac
 import base64
 import json
-import sqlite3
 
 from collections import OrderedDict
 from config import apikey_secret
@@ -38,7 +37,6 @@ def build_headers(URI, PUBKEY, PRIVKEY, PAYLOAD):
     # Build and sign to construct body
     #sbody = uri + "\n" + sctstamp + "\n"
     sbody = URI  + "\n" + sctstamp + "\n" + str(PAYLOAD)
-    print(sbody)
     rbody = sbody.encode("utf-8")
     rsig = hmac.new(skey, rbody, hashlib.sha512)
     bsig = base64.standard_b64encode(rsig.digest()).decode("utf-8")
@@ -58,12 +56,12 @@ def build_headers(URI, PUBKEY, PRIVKEY, PAYLOAD):
 def OrderHistory():
     uri="/order/history"
 
-    payload = {"currency":"AUD","instrument":"BTC","limit":20,"since":33434568724}
-    res = build_headers(uri, pkey, skey, payload)
-    print(res)
+    data = OrderedDict([('currency', 'AUD'),('instrument', 'XRP'),('limit', 10),('since', 0)])
+    postData = json.dumps(data, separators=(',', ':'))
+    res = build_headers(uri, pkey, skey, postData)
     
-    r = requests.post(domain+uri, headers=res, data=json.dumps(payload), verify=True)
-    print(r.text)
+    r = requests.post(domain+uri, headers=res, data=postData, verify=True)
+    print(json.dumps(r.json(), indent=4, sort_keys=True))
 
 def main():
     OrderHistory()
